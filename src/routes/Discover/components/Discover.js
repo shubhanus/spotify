@@ -13,6 +13,37 @@ export default class Discover extends Component {
       categories: [],
     };
   }
+
+  componentDidMount = async () => {
+    // requirements are not clear so going ahead with best UX i can think of
+    // In case if client wants to fetch all in one shot then show data
+    // then we can use promise.all that will send parallel req
+    await this.getDiscoverDataAndSetState(
+      "newReleases",
+      actions.getNewReleases
+    );
+    await this.getDiscoverDataAndSetState(
+      "playlists",
+      actions.getFeaturedPlaylists
+    );
+    await this.getDiscoverDataAndSetState("categories", actions.getCategories);
+  };
+
+  getDiscoverDataAndSetState = (stateType, api, time) => {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        api().then((data) => {
+          this.setState(
+            {
+              [stateType]: data,
+            },
+            resolve
+          );
+        });
+      }, time);
+    });
+  };
+
   render() {
     const { newReleases, playlists, categories } = this.state;
 
